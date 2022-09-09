@@ -6,5 +6,5 @@ app.use(cors("*"));
 
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`Server running in ${PORT}`);
+    console.log(`Server run in ${PORT}`);
 });
