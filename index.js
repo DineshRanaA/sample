@@ -1,10 +1,7 @@
-const app = require("express")();
+var express = require('express');
+var app = express();
 
-app.get('/',(req,res) => {
-    res.json({
-        message : 'testing'
-    });
-});
+app.use(express.static(__dirname));
 
 const PORT = 3002;
 const server = app.listen(PORT, () => {
@@ -12,7 +9,6 @@ const server = app.listen(PORT, () => {
 });
 
 const io = require("socket.io")(server);
-
 io.on("connection", async (socket) =>  {
     console.log(`a user has connected ${socket.id}`);
 
