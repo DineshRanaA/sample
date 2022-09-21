@@ -4,7 +4,7 @@ var app = express();
 require('dotenv').config();
 
 const PORT = process.env.PORT;
-app.use("/api/v32", require("./v32/router"));
+app.use("/", require("./v32/routes/chatTheme.route"));
 app.get('/',(req,res) => {
     res.json({
         message : 'testing'
