@@ -15,6 +15,15 @@ const getConfig = () => {
         MYSQL_PORT: 8889,
       };
       break;
+    case "MAIN":
+        config = {
+          MYSQL_HOST: "research.hifrds.com",
+          MYSQL_USERNAME: "nodetest",
+          MYSQL_PASSWORD: "Pepul@1234",
+          MYSQL_DB: "pepul_now",
+          MYSQL_PORT: 3306,
+        };
+        break;
     default:
       break;
   }
