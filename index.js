@@ -3,8 +3,14 @@ var app = express();
 
 require('dotenv').config();
 
-const PORT = process.env.PORT ?? 3002;
+// const PORT = process.env.PORT ?? 3002;
+const PORT = 3002;
 app.use("/api/v32", require("./v32/router"));
+app.get('/',(req,res) => {
+    res.json({
+        message : 'testing'
+    });
+});
 const server = app.listen(PORT, () => {
     console.log(`Server run in ${PORT}`);
 });
