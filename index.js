@@ -3,23 +3,32 @@ var app = express();
 
 require('dotenv').config();
 
-app.use(express.static(__dirname));
-
 const PORT = process.env.PORT ?? 3002;
+app.use("/api/v32", require("./v32/router"));
 const server = app.listen(PORT, () => {
     console.log(`Server run in ${PORT}`);
 });
 
-const io = require("socket.io")(server);
+const io = require("socket.io")(server, {
+	cors: {
+		origin: "*"
+	}
+});
 
 io.on("connection", async (socket) =>  {
     console.log(`a user has connected ${socket.id}`);
-
-    /*socket.on("_userAway", (payloadString) => {
-      console.log("_userAway",payloadString);
+    socket.on("_sendUserId", (payload) => {
+        var data = JSON.parse(payload);
+        socket.join("#"+data.userId);
     });
-  
-    socket.on("disconnect", () => {
-        console.log("a user disconnected ", `${socket.id}`);
-    });*/
-})
+
+    socket.on("_sendMessage", (payload) => {
+        var data = JSON.parse(payload);
+        io.sockets.in("#"+data.receiverId).emit('_receiveMessage', payload);
+    });
+
+    socket.on("_typing", (payload) => {
+        var data = JSON.parse(payload);
+        io.sockets.in("#"+data.receiverId).emit('_typingStatus', payload);
+    });
+});
