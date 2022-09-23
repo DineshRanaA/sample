@@ -24,6 +24,8 @@ const getConfig = () => {
           MYSQL_PASSWORD: "Pepul@1234",
           MYSQL_DB: "pepul_now",
           MYSQL_PORT: 3306,
+          ENCRYPT_KEY: "jWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y",
+          ALGORITHM: "aes-256-cbc",
         };
         break;
     default:
