@@ -6,8 +6,7 @@ const viewModel = require("../models/viewModel.model");
 const helperUtils = require("../utils/helper.utils");
 
 controller.getSetting = handler(async (req, res) => {
-  console.log(req.user.userId);
-  const viewModelRow = await viewModel.findAll({
+  const viewModelRow = await viewModel.findOne({
     attributes: ["referralContestTabShow","momentStreakTabShow"]
   });
   
@@ -15,8 +14,8 @@ controller.getSetting = handler(async (req, res) => {
     statusCode: 200,
     message: "success",
     data : {
-      referralContestTabShow: viewModelRow.referralContestTabShow==0 ? false :true,
-      momentStreakTabShow : viewModelRow.momentStreakTabShow==0 ? false :true
+      referralContestTabShow: viewModelRow.referralContestTabShow==0 ? false : true,
+      momentStreakTabShow : viewModelRow.momentStreakTabShow==0 ? false : true
     }
   });
 });
