@@ -13,6 +13,8 @@ const getConfig = () => {
         MYSQL_PASSWORD: "root",
         MYSQL_DB: "hifrdsDb",
         MYSQL_PORT: 8889,
+        ENCRYPT_KEY: "jWnZr4u7x!A%D*G-JaNdRgUkXp2s5v8y",
+        ALGORITHM: "aes-256-cbc",
       };
       break;
     case "MAIN":
