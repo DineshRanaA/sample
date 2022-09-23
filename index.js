@@ -1,9 +1,13 @@
 var express = require('express');
+const morgan = require("morgan");
+
 var app = express();
 
 require('dotenv').config();
 
 const PORT = process.env.PORT;
+
+app.use(morgan("dev"));
 app.use("/api/v32", require("./v32/router"));
 app.get('/',(req,res) => {
     res.json({
