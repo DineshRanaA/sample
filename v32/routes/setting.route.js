@@ -8,5 +8,6 @@ router.get("/appSetting", validateUser, chatController.getSetting);
 router.get("/phoneDecrypt", validateUser, chatController.phoneDecrypt);
 router.get("/phoneEncrypt", validateUser, chatController.phoneEncrypt);
 router.post("/updateCount", validateUser, chatController.updateCount);
+router.get("/followersList", validateUser, chatController.followersList);
 
 module.exports = router;

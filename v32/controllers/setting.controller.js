@@ -4,9 +4,11 @@ const controller = {};
 
 const viewModel = require("../models/viewModel.model");
 const userModel = require("../models/users.model");
+const relationModel = require("../models/relation.model");
 const helperUtils = require("../utils/helper.utils");
 
 const sequelize = require("../models/index");
+
 
 controller.getSetting = handler(async (req, res) => {
   const viewModelRow = await viewModel.findOne({
@@ -38,6 +40,37 @@ controller.updateCount = handler(async (req, res) => {
     statusCode: 200,
     message: "success",
     data : {}
+  });
+});
+
+controller.followersList = handler(async (req, res) => {
+  const relationIds = await relationModel.findAll({
+    attributes: ["relationId", "listUserId"],
+    where: {
+      relationUserId: req.user.userId,
+      type : 2
+    },
+    include: [
+      {
+        attributes: ["userName", "profileImage", "profileName"],
+        model: userModel,
+        required: true,
+      }
+    ],
+  });
+
+  const relarr = relationIds?.map((each) => ({
+    id: each?.relationId,
+    userId: each?.listUserId.toString(),
+    userName: each?.usersModel?.userName,
+    profileName: each?.usersModel?.profileName,
+    profileImage: each?.usersModel?.profileImage,
+  }))
+
+  return res.status(200).json({
+    statusCode: 200,
+    message: "success",
+    data : relarr
   });
 });
 
