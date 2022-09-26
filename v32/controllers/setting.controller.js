@@ -3,7 +3,10 @@ const handler = require("express-async-handler");
 const controller = {};
 
 const viewModel = require("../models/viewModel.model");
+const userModel = require("../models/users.model");
 const helperUtils = require("../utils/helper.utils");
+
+const sequelize = require("../models/index");
 
 controller.getSetting = handler(async (req, res) => {
   const viewModelRow = await viewModel.findOne({
@@ -17,6 +20,24 @@ controller.getSetting = handler(async (req, res) => {
       referralContestTabShow: viewModelRow.referralContestTabShow==0 ? false : true,
       momentStreakTabShow : viewModelRow.momentStreakTabShow==0 ? false : true
     }
+  });
+});
+
+controller.updateCount = handler(async (req, res) => {
+  if(req.body.type=='invite') {
+    await userModel.update({
+      inviteSentCount: sequelize.literal('inviteSentCount + 1'),
+    },
+    { 
+      where: {
+        userId: req.user.userId,
+      },
+    });
+  }
+  return res.status(200).json({
+    statusCode: 200,
+    message: "success",
+    data : {}
   });
 });
 
