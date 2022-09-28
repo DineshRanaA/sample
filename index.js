@@ -16,11 +16,7 @@ app.get('/',(req,res) => {
         message : 'testing'
     });
 });
-app.post("/v2", (req, res) => {
-    res.json({
-      message: "success",
-    });
-});
+
 const server = app.listen(PORT, () => {
     console.log(`Server run in ${PORT}`);
 });
