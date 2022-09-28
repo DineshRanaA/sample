@@ -34,18 +34,26 @@ controller.getChatId = handler(async (req, res) => {
         });
     }
 
-    chatUser.create({
+    await chatUser.create({
         senderUserId: req?.user?.userId,
         recipientUserId: req?.body?.recipientId,
         createdBy: req?.user?.userId,
         createdOn: new Date().toISOString(),
+    });
+
+    const chatId = await chatUser.findOne({
+        attributes: ["chatId"],
+        where: {
+            recipientUserId: req?.body?.recipientId,
+            senderUserId: req?.user?.userId
+        },
     });
   
     return res.status(200).json({
         statusCode: 200,
         message: "success",
         data : {
-            chatId: "sdfsdsfsdfsgsd",
+            chatId: chatId.chatId,
             users : []
         }
     });
