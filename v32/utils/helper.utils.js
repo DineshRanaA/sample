@@ -1,6 +1,7 @@
 const decodeJWT = require("jwt-decode");
 const crypto = require("crypto");
 const config = require("../config");
+const hideRelation = require("../models/hideRelation.model");
 
 const algorithm = config.getConfig().ALGORITHM; //Using AES encryption
 const key = config.getConfig().ENCRYPT_KEY;
@@ -47,5 +48,37 @@ utils.decrypt = (text) => {
   decrypted = Buffer.concat([decrypted, decipher.final()]);
   return decrypted.toString();
 };
+
+utils.getBlockedUserIds = (userId = "") =>
+new Promise(async (resolve, reject) => {
+  try {
+    const blockedUserIds = await hideRelation.findAll({
+      attributes: ["relationUserId"],
+      where: {
+        listUserId: userId,
+        type: 2,
+      }
+    });
+    resolve(blockedUserIds?.map((each) => each?.relationUserId));
+  } catch (err) {
+    reject(err);
+  }
+});
+
+utils.getBlockedByUserIds = (userId = "") =>
+new Promise(async (resolve, reject) => {
+  try {
+    const blockedByUserIds = await hideRelation.findAll({
+      attributes: ["listUserId"],
+      where: {
+        relationUserId: userId,
+        type: 2,
+      }
+    });
+    resolve(blockedByUserIds?.map((each) => each?.listUserId));
+  } catch (err) {
+    reject(err);
+  }
+});
 
 module.exports = utils;

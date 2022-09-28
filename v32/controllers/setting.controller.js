@@ -7,7 +7,7 @@ const userModel = require("../models/users.model");
 const relationModel = require("../models/relation.model");
 const helperUtils = require("../utils/helper.utils");
 
-const sequelize = require("../models/index");
+const { Op } = require("sequelize");
 
 
 controller.getSetting = handler(async (req, res) => {
@@ -27,14 +27,25 @@ controller.getSetting = handler(async (req, res) => {
 
 controller.updateCount = handler(async (req, res) => {
   if(req.body.type=='invite') {
-    await userModel.update({
+    await userModel.increment(
+      {
+        inviteSentCount: 1,
+      },
+      {
+        where: {
+          userId: req.user.userId,
+        },
+      }
+    );
+
+    /*await userModel.update({
       inviteSentCount: sequelize.literal('inviteSentCount + 1'),
     },
     { 
       where: {
         userId: req.user.userId,
       },
-    });
+    });*/
   }
   return res.status(200).json({
     statusCode: 200,
@@ -44,11 +55,16 @@ controller.updateCount = handler(async (req, res) => {
 });
 
 controller.followersList = handler(async (req, res) => {
+  const blockedUserIds = await helperUtils.getBlockedUserIds(req?.user?.userId);
+  const blockedByUserIds = await helperUtils.getBlockedByUserIds(req?.user?.userId);
   const relationIds = await relationModel.findAll({
     attributes: ["relationId", "listUserId"],
     where: {
-      relationUserId: req.user.userId,
-      type : 2
+      relationUserId: req?.user?.userId,
+      type : 2,
+      listUserId: {
+        [Op.notIn]: [...blockedByUserIds, ...blockedUserIds],
+      },
     },
     include: [
       {
@@ -60,12 +76,12 @@ controller.followersList = handler(async (req, res) => {
   });
 
   const relarr = relationIds?.map((each) => ({
-    id: each?.relationId,
-    userId: each?.listUserId.toString(),
+    id: (each?.relationId) ? each?.relationId.toString() : "",
+    userId: (each?.listUserId) ? each?.listUserId.toString() : "",
     userName: each?.usersModel?.userName,
     profileName: each?.usersModel?.profileName,
     profileImage: each?.usersModel?.profileImage,
-  }))
+  }));
 
   return res.status(200).json({
     statusCode: 200,
