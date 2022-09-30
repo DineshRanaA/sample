@@ -6,21 +6,19 @@ const chatUser = require("../models/chatUser.model");
 
 const { Op } = require("sequelize");
 
-controller.getChatId = handler(async (req, res) => {    
+controller.getChatId = handler(async (req, res) => {
     const ifChatId = await chatUser.count({
         where: {
             recipientUserId: req?.body?.recipientId,
-            senderUserId: req?.user?.userId
+            senderUserId: req?.user?.userId,
         },
     });
     if(ifChatId) {
         const chatId = await chatUser.findOne({
-            attributes: [
-                "chatId"
-            ],
+            attributes: ["chatId","createdBy","createdOn"],
             where: {
                 recipientUserId: req?.body?.recipientId,
-                senderUserId: req?.user?.userId
+                senderUserId: req?.user?.userId,
             },
         });
 
@@ -29,7 +27,44 @@ controller.getChatId = handler(async (req, res) => {
             message: "success",
             data : {
                 chatId: chatId.chatId,
-                users : []
+                users : [{userId : req?.user?.userId},{userId : req?.body?.recipientId}],
+                createdBy : chatId.createdBy.toString(),
+                createdOn : chatId.createdOn,
+            }
+        });
+    }
+
+    const checkAlready = await chatUser.count({
+        where: {
+            recipientUserId: req?.user?.userId,
+            senderUserId: req?.body?.recipientId,
+        },
+    });
+    if(checkAlready) {
+        const alreadyChatId = await chatUser.findOne({
+            attributes: ["chatId","createdBy","createdOn"],
+            where: {
+                recipientUserId: req?.user?.userId,
+                senderUserId: req?.body?.recipientId,
+            },
+        });
+
+        await chatUser.create({
+            chatId : alreadyChatId.chatId,
+            senderUserId: req?.user?.userId,
+            recipientUserId: req?.body?.recipientId,
+            createdBy: alreadyChatId.createdBy,
+            createdOn: new Date().toISOString(),
+        });
+
+        return res.status(200).json({
+            statusCode: 200,
+            message: "success",
+            data : {
+                chatId: alreadyChatId.chatId,
+                users : [{userId : req?.user?.userId},{userId : req?.body?.recipientId}],
+                createdBy : alreadyChatId.createdBy.toString(),
+                createdOn : alreadyChatId.createdOn,
             }
         });
     }
@@ -37,12 +72,12 @@ controller.getChatId = handler(async (req, res) => {
     await chatUser.create({
         senderUserId: req?.user?.userId,
         recipientUserId: req?.body?.recipientId,
-        createdBy: req?.user?.userId,
+        createdBy: req?.body?.userId,
         createdOn: new Date().toISOString(),
     });
 
     const chatId = await chatUser.findOne({
-        attributes: ["chatId"],
+        attributes: ["chatId","createdBy","createdOn"],
         where: {
             recipientUserId: req?.body?.recipientId,
             senderUserId: req?.user?.userId
@@ -54,7 +89,100 @@ controller.getChatId = handler(async (req, res) => {
         message: "success",
         data : {
             chatId: chatId.chatId,
-            users : []
+            users : [{userId : req?.user?.userId},{userId : req?.body?.recipientId}],
+            createdBy : chatId.createdBy.toString(),
+            createdOn : chatId.createdOn,
+        }
+    });
+});
+
+controller.checkDev = handler(async (req, res) => {
+    //req?.user?.userId
+    const ifChatId = await chatUser.count({
+        where: {
+            recipientUserId: req?.body?.recipientId,
+            senderUserId: req?.body?.userId,
+        },
+    });
+    if(ifChatId) {
+        const chatId = await chatUser.findOne({
+            attributes: ["chatId","createdBy","createdOn"],
+            where: {
+                recipientUserId: req?.body?.recipientId,
+                senderUserId: req?.body?.userId,
+            },
+        });
+
+        return res.status(200).json({
+            statusCode: 200,
+            message: "success",
+            data : {
+                chatId: chatId.chatId,
+                users : [{userId : req?.body?.userId},{userId : req?.body?.recipientId}],
+                createdBy : chatId.createdBy.toString(),
+                createdOn : chatId.createdOn,
+            }
+        });
+    }
+
+    const checkAlready = await chatUser.count({
+        where: {
+            recipientUserId: req?.body?.userId,
+            senderUserId: req?.body?.recipientId,
+        },
+    });
+    if(checkAlready) {
+        const alreadyChatId = await chatUser.findOne({
+            attributes: ["chatId","createdBy","createdOn"],
+            where: {
+                recipientUserId: req?.body?.userId,
+                senderUserId: req?.body?.recipientId,
+            },
+        });
+
+        await chatUser.create({
+            chatId : alreadyChatId.chatId,
+            senderUserId: req?.body?.userId,
+            recipientUserId: req?.body?.recipientId,
+            createdBy: alreadyChatId.createdBy,
+            createdOn: new Date().toISOString(),
+        });
+
+        return res.status(200).json({
+            statusCode: 200,
+            message: "success",
+            data : {
+                chatId: alreadyChatId.chatId,
+                users : [{userId : req?.body?.userId},{userId : req?.body?.recipientId}],
+                createdBy : alreadyChatId.createdBy.toString(),
+                createdOn : alreadyChatId.createdOn,
+            }
+        });
+    }
+
+    await chatUser.create({
+        senderUserId: req?.body?.userId,
+        recipientUserId: req?.body?.recipientId,
+        createdBy: req?.body?.userId,
+        createdOn: new Date().toISOString(),
+    });
+
+    const chatId = await chatUser.findOne({
+        attributes: ["chatId","createdBy","createdOn"],
+        where: {
+            recipientUserId: req?.body?.recipientId,
+            senderUserId: req?.body?.userId
+        },
+    });
+  
+    return res.status(200).json({
+        statusCode: 200,
+        message: "success",
+        data : {
+            chatId: chatId.chatId,
+            users : [{userId : req?.body?.userId},{userId : req?.body?.recipientId}],
+            createdBy : chatId.createdBy.toString(),
+            createdOn : chatId.createdOn,
         }
     });
 });
