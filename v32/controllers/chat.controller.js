@@ -72,7 +72,7 @@ controller.getChatId = handler(async (req, res) => {
     await chatUser.create({
         senderUserId: req?.user?.userId,
         recipientUserId: req?.body?.recipientId,
-        createdBy: req?.body?.userId,
+        createdBy: req?.user?.userId,
         createdOn: new Date().toISOString(),
     });
 

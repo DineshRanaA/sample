@@ -5,5 +5,6 @@ const chatController = require("../controllers/chat.controller");
 const {validateUser} = require("../utils/helper.utils");
 
 router.post("/getChatId", validateUser, chatController.getChatId);
+router.post("/getChatIdDev", validateUser, chatController.checkDev);
 
 module.exports = router;
