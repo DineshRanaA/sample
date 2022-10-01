@@ -9,7 +9,7 @@ const { Op } = require("sequelize");
 controller.getChatId = handler(async (req, res) => {
     const ifChatId = await chatUser.count({
         where: {
-            recipientUserId: req?.body?.recipientId,
+            recipientUserId: req?.body?.userId,
             senderUserId: req?.user?.userId,
         },
     });
@@ -17,7 +17,7 @@ controller.getChatId = handler(async (req, res) => {
         const chatId = await chatUser.findOne({
             attributes: ["chatId","createdBy","createdOn"],
             where: {
-                recipientUserId: req?.body?.recipientId,
+                recipientUserId: req?.body?.userId,
                 senderUserId: req?.user?.userId,
             },
         });
@@ -27,7 +27,7 @@ controller.getChatId = handler(async (req, res) => {
             message: "success",
             data : {
                 chatId: chatId.chatId,
-                users : [{userId : req?.user?.userId},{userId : req?.body?.recipientId}],
+                users : [{userId : req?.user?.userId},{userId : req?.body?.userId}],
                 createdBy : chatId.createdBy.toString(),
                 createdOn : chatId.createdOn,
             }
@@ -37,7 +37,7 @@ controller.getChatId = handler(async (req, res) => {
     const checkAlready = await chatUser.count({
         where: {
             recipientUserId: req?.user?.userId,
-            senderUserId: req?.body?.recipientId,
+            senderUserId: req?.body?.userId,
         },
     });
     if(checkAlready) {
@@ -45,14 +45,14 @@ controller.getChatId = handler(async (req, res) => {
             attributes: ["chatId","createdBy","createdOn"],
             where: {
                 recipientUserId: req?.user?.userId,
-                senderUserId: req?.body?.recipientId,
+                senderUserId: req?.body?.userId,
             },
         });
 
         await chatUser.create({
             chatId : alreadyChatId.chatId,
             senderUserId: req?.user?.userId,
-            recipientUserId: req?.body?.recipientId,
+            recipientUserId: req?.body?.userId,
             createdBy: alreadyChatId.createdBy,
             createdOn: new Date().toISOString(),
         });
@@ -62,7 +62,7 @@ controller.getChatId = handler(async (req, res) => {
             message: "success",
             data : {
                 chatId: alreadyChatId.chatId,
-                users : [{userId : req?.user?.userId},{userId : req?.body?.recipientId}],
+                users : [{userId : req?.user?.userId},{userId : req?.body?.userId}],
                 createdBy : alreadyChatId.createdBy.toString(),
                 createdOn : alreadyChatId.createdOn,
             }
@@ -71,7 +71,7 @@ controller.getChatId = handler(async (req, res) => {
 
     await chatUser.create({
         senderUserId: req?.user?.userId,
-        recipientUserId: req?.body?.recipientId,
+        recipientUserId: req?.body?.userId,
         createdBy: req?.user?.userId,
         createdOn: new Date().toISOString(),
     });
@@ -79,7 +79,7 @@ controller.getChatId = handler(async (req, res) => {
     const chatId = await chatUser.findOne({
         attributes: ["chatId","createdBy","createdOn"],
         where: {
-            recipientUserId: req?.body?.recipientId,
+            recipientUserId: req?.body?.userId,
             senderUserId: req?.user?.userId
         },
     });
@@ -89,7 +89,7 @@ controller.getChatId = handler(async (req, res) => {
         message: "success",
         data : {
             chatId: chatId.chatId,
-            users : [{userId : req?.user?.userId},{userId : req?.body?.recipientId}],
+            users : [{userId : req?.user?.userId},{userId : req?.body?.userId}],
             createdBy : chatId.createdBy.toString(),
             createdOn : chatId.createdOn,
         }
@@ -100,7 +100,7 @@ controller.checkDev = handler(async (req, res) => {
     //req?.user?.userId
     const ifChatId = await chatUser.count({
         where: {
-            recipientUserId: req?.body?.recipientId,
+            recipientUserId: req?.body?.userId,
             senderUserId: req?.body?.userId,
         },
     });
@@ -108,7 +108,7 @@ controller.checkDev = handler(async (req, res) => {
         const chatId = await chatUser.findOne({
             attributes: ["chatId","createdBy","createdOn"],
             where: {
-                recipientUserId: req?.body?.recipientId,
+                recipientUserId: req?.body?.userId,
                 senderUserId: req?.body?.userId,
             },
         });
@@ -118,7 +118,7 @@ controller.checkDev = handler(async (req, res) => {
             message: "success",
             data : {
                 chatId: chatId.chatId,
-                users : [{userId : req?.body?.userId},{userId : req?.body?.recipientId}],
+                users : [{userId : req?.body?.userId},{userId : req?.body?.userId}],
                 createdBy : chatId.createdBy.toString(),
                 createdOn : chatId.createdOn,
             }
@@ -128,7 +128,7 @@ controller.checkDev = handler(async (req, res) => {
     const checkAlready = await chatUser.count({
         where: {
             recipientUserId: req?.body?.userId,
-            senderUserId: req?.body?.recipientId,
+            senderUserId: req?.body?.userId,
         },
     });
     if(checkAlready) {
@@ -136,14 +136,14 @@ controller.checkDev = handler(async (req, res) => {
             attributes: ["chatId","createdBy","createdOn"],
             where: {
                 recipientUserId: req?.body?.userId,
-                senderUserId: req?.body?.recipientId,
+                senderUserId: req?.body?.userId,
             },
         });
 
         await chatUser.create({
             chatId : alreadyChatId.chatId,
             senderUserId: req?.body?.userId,
-            recipientUserId: req?.body?.recipientId,
+            recipientUserId: req?.body?.userId,
             createdBy: alreadyChatId.createdBy,
             createdOn: new Date().toISOString(),
         });
@@ -153,7 +153,7 @@ controller.checkDev = handler(async (req, res) => {
             message: "success",
             data : {
                 chatId: alreadyChatId.chatId,
-                users : [{userId : req?.body?.userId},{userId : req?.body?.recipientId}],
+                users : [{userId : req?.body?.userId},{userId : req?.body?.userId}],
                 createdBy : alreadyChatId.createdBy.toString(),
                 createdOn : alreadyChatId.createdOn,
             }
@@ -162,7 +162,7 @@ controller.checkDev = handler(async (req, res) => {
 
     await chatUser.create({
         senderUserId: req?.body?.userId,
-        recipientUserId: req?.body?.recipientId,
+        recipientUserId: req?.body?.userId,
         createdBy: req?.body?.userId,
         createdOn: new Date().toISOString(),
     });
@@ -170,7 +170,7 @@ controller.checkDev = handler(async (req, res) => {
     const chatId = await chatUser.findOne({
         attributes: ["chatId","createdBy","createdOn"],
         where: {
-            recipientUserId: req?.body?.recipientId,
+            recipientUserId: req?.body?.userId,
             senderUserId: req?.body?.userId
         },
     });
@@ -180,7 +180,7 @@ controller.checkDev = handler(async (req, res) => {
         message: "success",
         data : {
             chatId: chatId.chatId,
-            users : [{userId : req?.body?.userId},{userId : req?.body?.recipientId}],
+            users : [{userId : req?.body?.userId},{userId : req?.body?.userId}],
             createdBy : chatId.createdBy.toString(),
             createdOn : chatId.createdOn,
         }
