@@ -10,8 +10,8 @@ const iv = Buffer.alloc(16).fill(0);
 const utils = {};
 
 utils.validateUser = async (req, res, next) => {
+  console.log(req?.headers);
   const token = req?.headers?.authorization?.split("Bearer ")?.[1];
-  console.log(token);
   if(token) {
     const user = decodeJWT(token);
     console.log(user?.user_id);
