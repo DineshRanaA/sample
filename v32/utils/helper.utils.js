@@ -14,7 +14,6 @@ utils.validateUser = async (req, res, next) => {
   const token = req?.headers?.authorization?.split("Bearer ")?.[1];
   if(token) {
     const user = decodeJWT(token);
-    console.log(user?.user_id);
     if (!user?.user_id)
       return res.status(403).json({
         statusCode: 403,
