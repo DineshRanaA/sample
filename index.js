@@ -16,6 +16,11 @@ app.get('/',(req,res) => {
         message : 'testing'
     });
 });
+app.get('/page',(req,res) => {
+    res.json({
+        message : 'paging'
+    });
+});
 
 const server = app.listen(PORT, () => {
     console.log(`Server run in ${PORT}`);
