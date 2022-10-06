@@ -1,10 +1,10 @@
 const decodeJWT = require("jwt-decode");
 const crypto = require("crypto");
-const config = require("../config");
+require('dotenv').config();
 const hideRelation = require("../models/hideRelation.model");
 
-const algorithm = config.getConfig().ALGORITHM; //Using AES encryption
-const key = config.getConfig().ENCRYPT_KEY;
+const algorithm = process.env.ALGORITHM; //Using AES encryption
+const key = process.env.ENCRYPT_KEY;
 const iv = Buffer.alloc(16).fill(0);
 
 const utils = {};
