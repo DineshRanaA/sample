@@ -239,6 +239,12 @@ const usersModel = db.define(
       defaultValue: 0,
       allowNull: false,
     },
+    wishPopup: {
+      field: "wishPopup",
+      type: Sequelize.DataTypes.TINYINT,
+      defaultValue: 0,
+      allowNull: false,
+    },
   },
   {
     timestamps: false,

@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const Log = require("../models/log.model");
 const hideRelation = require("../models/hideRelation.model");
+const users = require("../models/users.model");
 
 const algorithm = process.env.ALGORITHM; //Using AES encryption
 const key = process.env.ENCRYPT_KEY;
@@ -12,22 +13,27 @@ const iv = Buffer.alloc(16).fill(0);
 const utils = {};
 
 utils.validateUser = async (req, res, next) => {
-  console.log(req?.headers);
-  const token = req?.headers?.authorization?.split("Bearer ")?.[1];
-  if(token) {
-    const user = decodeJWT(token);
-    if (!user?.user_id)
-      return res.status(403).json({
-        statusCode: 403,
-        message: "token Invalid"
-      });
-    req.user = {userId: user?.user_id};
-    next();
-  } else {
-    return res.status(403).json({
-      statusCode: 403,
-      message: "token Invalid"
-    });
+  var statusCode = 403;
+  const invalidData = {
+    statusCode: statusCode,
+    message: "token Invalid",
+  };
+  try {
+    const token = req?.headers?.authorization?.split("Bearer ")?.[1];
+    if(token) {
+      const decode = decodeJWT(token);
+      if (!decode?.user_id)
+        return res.status(statusCode).json(invalidData);
+      const user = await users.findOne({where: {userId: decode?.user_id}});
+      if (!user) return res.status(statusCode).json(invalidData);
+      req.user = user.toJSON();
+      next();
+    } else {
+      return res.status(statusCode).json(invalidData);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(statusCode).json(invalidData);
   }
 };
 
