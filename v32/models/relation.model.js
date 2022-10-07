@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const db = require("../config/mysqlSequelizeDb.config");
+const db = require("../config/sequelizeDb.config");
 const users = require("./users.model");
 
 const relationModel = db.define(

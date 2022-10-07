@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const db = require("../config/mysqlSequelizeDb.config");
+const db = require("../config/sequelizeDb.config");
 
 const chatUsers = db.define(
   "chatUsers",

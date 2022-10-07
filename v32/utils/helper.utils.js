@@ -1,6 +1,8 @@
 const decodeJWT = require("jwt-decode");
 const crypto = require("crypto");
 require('dotenv').config();
+
+const Log = require("../models/log.model");
 const hideRelation = require("../models/hideRelation.model");
 
 const algorithm = process.env.ALGORITHM; //Using AES encryption
@@ -28,8 +30,6 @@ utils.validateUser = async (req, res, next) => {
     });
   }
 };
-
-module.exports = utils;
 
 utils.encrypt = (text) => {
   let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
@@ -81,5 +81,27 @@ new Promise(async (resolve, reject) => {
     reject(err);
   }
 });
+
+utils.errorLogging = (data) => {
+  Log.create({
+    logType: "SERVER_ERROR",
+    url: data.url,
+    body: data.body,
+    data: JSON.parse(data.message),
+    userId: data?.userId,
+  });
+};
+
+utils.clientErrorLogging = (data) => {
+  Log.create({
+    logType: "CLIENT_ERROR",
+    url: data.url,
+    body: data.body,
+    data: {
+      message: data.message,
+    },
+    userId: data?.userId,
+  });
+};
 
 module.exports = utils;
