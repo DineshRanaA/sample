@@ -55,12 +55,12 @@ controller.updateCount = handler(async (req, res) => {
 });
 
 controller.followersList = handler(async (req, res) => {
-  const blockedUserIds = await helperUtils.getBlockedUserIds(req?.user?.userId);
-  const blockedByUserIds = await helperUtils.getBlockedByUserIds(req?.user?.userId);
+  const blockedUserIds = await helperUtils.getBlockedUserIds(req?.body?.userId);
+  const blockedByUserIds = await helperUtils.getBlockedByUserIds(req?.body?.userId);
   const relationIds = await relationModel.findAll({
     attributes: ["relationId", "listUserId"],
     where: {
-      relationUserId: req?.user?.userId,
+      relationUserId: req?.body?.userId,
       type : 2,
       listUserId: {
         [Op.notIn]: [...blockedByUserIds, ...blockedUserIds],
@@ -73,6 +73,7 @@ controller.followersList = handler(async (req, res) => {
         required: true,
       }
     ],
+    order: [["relationId", "DESC"]],
   });
 
   const relarr = relationIds?.map((each) => ({
@@ -86,7 +87,10 @@ controller.followersList = handler(async (req, res) => {
   return res.status(200).json({
     statusCode: 200,
     message: "success",
-    data : relarr
+    data : {
+      totalCount: relarr.length,
+      userArr: relarr
+    }
   });
 });
 
