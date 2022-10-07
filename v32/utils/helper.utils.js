@@ -110,4 +110,9 @@ utils.clientErrorLogging = (data) => {
   });
 };
 
+utils.getOffset = (req, limit) => {
+  const page = req?.body?.page ? parseInt(req?.body?.page) : 1;
+  return (page - 1) * limit;
+};
+
 module.exports = utils;

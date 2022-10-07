@@ -55,9 +55,10 @@ controller.updateCount = handler(async (req, res) => {
 });
 
 controller.followersList = handler(async (req, res) => {
+  let pageSize = req?.body?.pageSize ?? 20;
   const blockedUserIds = await helperUtils.getBlockedUserIds(req?.body?.userId);
   const blockedByUserIds = await helperUtils.getBlockedByUserIds(req?.body?.userId);
-  const relationIds = await relationModel.findAll({
+  const relationIds = await relationModel.findAndCountAll({
     attributes: ["relationId", "listUserId"],
     where: {
       relationUserId: req?.body?.userId,
@@ -74,9 +75,11 @@ controller.followersList = handler(async (req, res) => {
       }
     ],
     order: [["relationId", "DESC"]],
+    offset: helperUtils.getOffset(req, pageSize),
+    limit: pageSize,
   });
 
-  const relarr = relationIds?.map((each) => ({
+  const relarr = relationIds?.rows?.map((each) => ({
     id: (each?.relationId) ? each?.relationId.toString() : "",
     userId: (each?.listUserId) ? each?.listUserId.toString() : "",
     userName: each?.usersModel?.userName,
@@ -88,7 +91,7 @@ controller.followersList = handler(async (req, res) => {
     statusCode: 200,
     message: "success",
     data : {
-      totalCount: relarr.length,
+      totalCount: relationIds.count,
       userArr: relarr
     }
   });
