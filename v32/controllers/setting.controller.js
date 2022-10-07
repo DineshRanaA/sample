@@ -81,7 +81,7 @@ controller.followersList = handler(async (req, res) => {
     userId: (each?.listUserId) ? each?.listUserId.toString() : "",
     userName: each?.usersModel?.userName,
     profileName: each?.usersModel?.profileName,
-    profileImage: each?.usersModel?.profileImage,
+    userImg: each?.usersModel?.profileImage,
   }));
 
   return res.status(200).json({
