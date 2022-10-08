@@ -5,10 +5,14 @@ require('dotenv').config();
 const Log = require("../models/log.model");
 const hideRelation = require("../models/hideRelation.model");
 const users = require("../models/users.model");
+const relationModel = require("../models/relation.model");
 
 const algorithm = process.env.ALGORITHM; //Using AES encryption
 const key = process.env.ENCRYPT_KEY;
 const iv = Buffer.alloc(16).fill(0);
+
+const { Op } = require("sequelize");
+const sequelize = require("../config/sequelizeDb.config");
 
 const utils = {};
 
@@ -83,6 +87,52 @@ new Promise(async (resolve, reject) => {
       }
     });
     resolve(blockedByUserIds?.map((each) => each?.listUserId));
+  } catch (err) {
+    reject(err);
+  }
+});
+
+utils.getFollowingUserIds = (userId) =>
+new Promise(async (resolve, reject) => {
+  try {
+    const blockedUserIds = await utils.getBlockedUserIds(userId);
+    const blockedByUserIds = await utils.getBlockedByUserIds(userId);
+    const followingUserIds = await relationModel.findAll({
+      attributes:["relationUserId"],
+      where: {
+        listUserId: userId,
+        type: 2,
+        relationUserId: {
+          [Op.notIn]: [...blockedByUserIds, ...blockedUserIds],
+        },
+      },
+      group: ["relationUserId"],
+      raw: true,
+    });
+    resolve(followingUserIds?.map((each) => each?.relationUserId));
+  } catch (err) {
+    reject(err);
+  }
+});
+
+utils.getFollowersUserIds = (userId) =>
+new Promise(async (resolve, reject) => {
+  try {
+    const blockedUserIds = await utils.getBlockedUserIds(userId);
+    const blockedByUserIds = await utils.getBlockedByUserIds(userId);
+    const followersUserIds = await relationModel.findAll({
+      attributes:["listUserId"],
+      where: {
+        relationUserId: userId,
+        type : 2,
+        listUserId: {
+          [Op.notIn]: [...blockedByUserIds, ...blockedUserIds],
+        },
+      },
+      group: ["listUserId"],
+      raw: true,
+    });
+    resolve(followersUserIds?.map((each) => each?.listUserId));
   } catch (err) {
     reject(err);
   }

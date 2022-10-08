@@ -9,5 +9,6 @@ router.get("/phoneDecrypt", validateUser, chatController.phoneDecrypt);
 router.get("/phoneEncrypt", validateUser, chatController.phoneEncrypt);
 router.post("/updateCount", validateUser, chatController.updateCount);
 router.post("/followersList", validateUser, chatController.followersList);
+router.post("/followingList", validateUser, chatController.followingList);
 
 module.exports = router;

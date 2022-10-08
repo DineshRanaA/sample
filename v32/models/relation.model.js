@@ -1,6 +1,5 @@
 const Sequelize = require("sequelize");
 const db = require("../config/sequelizeDb.config");
-const users = require("./users.model");
 
 const relationModel = db.define(
   "relationModel",
@@ -80,11 +79,5 @@ const relationModel = db.define(
     tableName: "relation",
   }
 );
-
-relationModel.belongsTo(users, {
-    foreignKey: "listUserId",
-    targetKey: "userId",
-    constraints: false,
-});
 
 module.exports = relationModel;

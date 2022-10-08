@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../config/sequelizeDb.config");
+const relationModel = require("./relation.model");
 
 const usersModel = db.define(
   "usersModel",
@@ -28,7 +29,7 @@ const usersModel = db.define(
       defaultValue: '',
       allowNull: false,
     },
-    profileImage: {
+    userImg: {
       field: "profileImage",
       type: Sequelize.DataTypes.STRING,
       defaultValue: '',
